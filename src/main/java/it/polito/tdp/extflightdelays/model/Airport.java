@@ -125,8 +125,8 @@ public class Airport implements Comparable<Airport>{
 	}
 
 	@Override
-	public int compareTo(Airport o) {
-		return this.iataCode.compareTo(o.getIataCode());
+	public int compareTo(Airport other) {
+		return this.iataCode.compareTo(other.iataCode);
 	}
 	
 }

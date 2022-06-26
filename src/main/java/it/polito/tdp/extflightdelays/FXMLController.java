@@ -46,18 +46,17 @@ public class FXMLController {
     	txtResult.clear();
     	
     	int x;
-    	
     	try {
     		x = Integer.parseInt(compagnieMinimo.getText());
-    	} catch (NumberFormatException e) {
+    	} catch(NumberFormatException e) {
     		txtResult.appendText("Inserire valore numerico");
     		return;
     	}
     	
     	this.model.creaGrafo(x);
     	
-    	txtResult.appendText("# VERTICI: " + this.model.nVertici() + "\n");
-    	txtResult.appendText("# ARCHI: " + this.model.nArchi());
+    	txtResult.appendText("# VERTICI: "+this.model.nVertici()+"\n");
+    	txtResult.appendText("# ARCHI: "+this.model.nArchi());
     	
     	cmbBoxAeroportoPartenza.getItems().addAll(this.model.getVertici());
     	cmbBoxAeroportoDestinazione.getItems().addAll(this.model.getVertici());
@@ -66,15 +65,14 @@ public class FXMLController {
     @FXML
     void doTestConnessione(ActionEvent event) {
     	txtResult.clear();
-    	if(cmbBoxAeroportoPartenza.getValue() == null ||
-    			cmbBoxAeroportoDestinazione.getValue() == null) {
+    	
+    	if(cmbBoxAeroportoPartenza.getValue()==null || cmbBoxAeroportoDestinazione.getValue()==null) {
     		txtResult.appendText("Seleziona i due aeroporti!");
-    		return ;
+    		return;
     	}
     	
     	List<Airport> percorso = this.model.getPercorso(cmbBoxAeroportoPartenza.getValue(), cmbBoxAeroportoDestinazione.getValue());
-    	
-    	if(percorso == null) {
+    	if(percorso==null) {
     		txtResult.appendText("I due aeroporti non sono collegati");
     	} else {
     		txtResult.appendText(percorso.toString());

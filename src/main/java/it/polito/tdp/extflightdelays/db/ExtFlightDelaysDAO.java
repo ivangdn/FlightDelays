@@ -39,7 +39,7 @@ public class ExtFlightDelaysDAO {
 		}
 	}
 
-	public void loadAllAirports(Map<Integer,Airport> idMap) {
+	public void loadAllAirports(Map<Integer, Airport> idMap) {
 		String sql = "SELECT * FROM airports";
 
 		try {
@@ -48,14 +48,13 @@ public class ExtFlightDelaysDAO {
 			ResultSet rs = st.executeQuery();
 
 			while (rs.next()) {
-				
 				if(!idMap.containsKey(rs.getInt("ID"))) {
 					Airport airport = new Airport(rs.getInt("ID"), rs.getString("IATA_CODE"), rs.getString("AIRPORT"),
 						rs.getString("CITY"), rs.getString("STATE"), rs.getString("COUNTRY"), rs.getDouble("LATITUDE"),
 						rs.getDouble("LONGITUDE"), rs.getDouble("TIMEZONE_OFFSET"));
 					idMap.put(airport.getId(), airport);
 				}
-
+				
 			}
 
 			conn.close();
@@ -96,26 +95,27 @@ public class ExtFlightDelaysDAO {
 		}
 	}
 	
-	public List<Airport> getVertici(int x, Map<Integer,Airport> idMap){
-		String sql = "SELECT a.id "
+	public List<Airport> getVertici(int x, Map<Integer, Airport> idMap) {
+		String sql = "SELECT a.ID "
 				+ "FROM airports a, flights f "
-				+ "WHERE (a.id = f.ORIGIN_AIRPORT_ID OR a.id = f.DESTINATION_AIRPORT_ID) "
-				+ "GROUP BY a.id "
-				+ "HAVING COUNT(DISTINCT (f.AIRLINE_ID)) >= ?";
-		List<Airport> result = new ArrayList<Airport> ();
+				+ "WHERE (a.ID = f.ORIGIN_AIRPORT_ID OR a.ID = f.DESTINATION_AIRPORT_ID) "
+				+ "GROUP BY a.ID "
+				+ "HAVING COUNT(DISTINCT f.AIRLINE_ID) >= ?";
+		List<Airport> result = new ArrayList<Airport>();
 		
 		try {
 			Connection conn = ConnectDB.getConnection();
 			PreparedStatement st = conn.prepareStatement(sql);
 			st.setInt(1, x);
 			ResultSet rs = st.executeQuery();
-			
+
 			while (rs.next()) {
-				result.add(idMap.get(rs.getInt("id")));
+				result.add(idMap.get(rs.getInt("ID")));
 			}
-			
+
 			conn.close();
 			return result;
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 			System.out.println("Errore connessione al database");
@@ -124,7 +124,7 @@ public class ExtFlightDelaysDAO {
 	}
 
 	public List<Rotta> getRotte(Map<Integer, Airport> idMap) {
-		String sql = "SELECT f.ORIGIN_AIRPORT_ID as a1, f.DESTINATION_AIRPORT_ID as a2, COUNT(*) AS n "
+		String sql = "SELECT f.ORIGIN_AIRPORT_ID AS a1, f.DESTINATION_AIRPORT_ID AS a2, COUNT(*) AS n "
 				+ "FROM flights f "
 				+ "GROUP BY f.ORIGIN_AIRPORT_ID, f.DESTINATION_AIRPORT_ID";
 		List<Rotta> result = new ArrayList<Rotta>();
@@ -133,33 +133,23 @@ public class ExtFlightDelaysDAO {
 			Connection conn = ConnectDB.getConnection();
 			PreparedStatement st = conn.prepareStatement(sql);
 			ResultSet rs = st.executeQuery();
-			
-			while(rs.next()) {
+
+			while (rs.next()) {
 				Airport sorgente = idMap.get(rs.getInt("a1"));
 				Airport destinazione = idMap.get(rs.getInt("a2"));
 				
-				if(sorgente != null && destinazione != null) {
+				if(sorgente!=null && destinazione!=null) {
 					result.add(new Rotta(sorgente, destinazione, rs.getInt("n")));
 				}
-				
 			}
-			
+
 			conn.close();
 			return result;
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 			System.out.println("Errore connessione al database");
 			throw new RuntimeException("Error Connection Database");
 		}
-		
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
 }
